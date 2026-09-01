@@ -15,8 +15,15 @@ const STOPWORDS = new Set([
   'some', 'users', 'user', 'issue', 'error', 'errors', 'failing', 'failed', 'broken', 'down',
 ]);
 
-/** Recency weight falls to ~1/e after this many hours. */
-const RECENCY_TAU_HOURS = 6;
+/**
+ * Recency weight falls to ~1/e after this many hours.
+ *
+ * Tightened from 6h to 4h after reviewing a run where a change from five
+ * hours earlier still out-scored one from twenty minutes earlier once it
+ * picked up a second keyword hit. During an incident, "what just shipped"
+ * should win that tiebreak more often than it was.
+ */
+const RECENCY_TAU_HOURS = 4;
 
 /**
  * A deterministic stand-in for the LLM.
