@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "firebreak": {
+      "command": "npx",
+      "args": ["tsx", "src/mcp/server.ts"],
+      "env": {
+        "DATABASE_PATH": "./data/demo.db",
+        "LOG_LEVEL": "silent"
+      }
+    }
+  }
+}

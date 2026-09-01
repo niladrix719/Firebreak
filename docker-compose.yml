@@ -1,0 +1,15 @@
+services:
+  firebreak:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_PATH: /data/firebreak.db
+      NODE_ENV: production
+    volumes:
+      # The incident record outlives the container. Losing it means losing
+      # every timeline and postmortem draft.
+      - firebreak-data:/data
+
+volumes:
+  firebreak-data:
