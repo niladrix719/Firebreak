@@ -124,7 +124,7 @@ claude mcp add firebreak -e DATABASE_PATH=./data/demo.db -- npx tsx src/mcp/serv
 | `get_timeline` | *What happened during INC-2026-0004?* Metadata, every timeline entry, the correlation from declare time, the postmortem link |
 | `recent_changes` | *What shipped before the Tuesday outage?* Given an incident key, returns exactly what was captured at declare time — the historical record, unaffected by everything merged since. Given a window instead, queries GitHub live |
 
-That distinction is the point of the tool. Asking GitHub "what merged before Tuesday 14:00" a month later gives you a different answer than the one responders had in front of them, because branches get rebased and deployments get superseded. `recent_changes` with an incident key replays the snapshot.
+That distinction is the whole point of the correlation feature: a live GitHub query answers "what has merged as of right now," which quietly drifts as branches get rebased and deployments get superseded, while `recent_changes` on an incident key answers "what did the responders actually see" — a fixed, replayable snapshot from the moment the incident was declared.
 
 The server holds no Slack or GitHub credentials of its own and has no write path, so pointing an agent at it cannot mutate an incident.
 
