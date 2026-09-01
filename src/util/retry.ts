@@ -19,7 +19,11 @@ export function isTransient(err: unknown): boolean {
   return code === 'ECONNRESET' || code === 'ETIMEDOUT' || code === 'ENOTFOUND' || code === 'EAI_AGAIN';
 }
 
-/** Exponential backoff with full jitter, so a fleet of retries doesn't sync up. */
+/**
+ * Exponential backoff with full jitter, so a fleet of retries doesn't sync up.
+ * See https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
+ * for the case against fixed or additive jitter.
+ */
 export async function withRetry<T>(fn: () => Promise<T>, opts: RetryOptions): Promise<T> {
   const attempts = opts.attempts ?? 3;
   const base = opts.baseDelayMs ?? 250;
