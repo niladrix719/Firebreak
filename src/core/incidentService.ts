@@ -11,7 +11,7 @@ import type {
   TimelineEntry,
   TimelineKind,
 } from './types.js';
-import { ConflictError, NotFoundError, UpstreamError } from '../util/errors.js';
+import { ConflictError, NotFoundError, UpstreamError, messageFor } from '../util/errors.js';
 import { newId, slugify } from '../util/ids.js';
 import { hoursAgo } from '../util/time.js';
 import { logger } from '../util/logger.js';
@@ -124,16 +124,35 @@ export class IncidentService {
     const changes = await this.collectChanges(incident);
     await this.deps.store.saveChanges(incident.id, changes);
 
-    const report = await this.deps.llm.correlate({
-      incident: {
-        key: incident.key,
-        title: incident.title,
-        severity: incident.severity,
-        declaredAt: incident.declaredAt,
-      },
-      changes,
-      fetchDetail: (changeId) => this.deps.github.getChangeDetail(changeId),
-    });
+    // A thrown error here (network, auth, billing) must not leave the channel
+    // hanging on "pulling recent changes" forever — degrade to the same shape
+    // an LLM adapter returns for a validation failure, so responders always
+    // get *something* to look at. Only the LLM call is guarded like this;
+    // GitHub failures are already caught inside collectChanges().
+    let report: CorrelationReport;
+    try {
+      report = await this.deps.llm.correlate({
+        incident: {
+          key: incident.key,
+          title: incident.title,
+          severity: incident.severity,
+          declaredAt: incident.declaredAt,
+        },
+        changes,
+        fetchDetail: (changeId) => this.deps.github.getChangeDetail(changeId),
+      });
+    } catch (err) {
+      logger.error({ err, key: incident.key }, 'correlation agent failed; falling back to an unranked change list');
+      const reason = messageFor(err);
+      report = {
+        summary: `Automated correlation failed (${reason}). ${changes.length} change(s) shipped in the lookback window and are listed below for manual review.`,
+        findings: [],
+        suggestedChecks: ['Review the change list manually.', 'Check the bot logs for the underlying error.'],
+        toolCalls: 0,
+        model: this.deps.llm.model,
+        degraded: reason,
+      };
+    }
 
     await this.deps.store.saveCorrelation(incident.id, report);
     await this.deps.store.updateIncident(incident.id, { correlationSummary: report.summary });

@@ -170,6 +170,34 @@ describe('IncidentService.investigate', () => {
     expect(await store.getChanges(incident.id)).toEqual([]);
   });
 
+  it('still produces a report — and still posts to the channel — when the LLM call throws outright', async () => {
+    const { chat, store } = setup();
+    const failing = new StubLlm();
+    failing.correlate = async () => {
+      throw new Error('credit balance is too low');
+    };
+    const failingService = new IncidentService(
+      { store, chat, github: new FakeGitHub(storefrontChanges(DECLARED_AT)), llm: failing },
+      { lookbackHours: 48, lookbackLimit: 30 },
+    );
+
+    const { incident, channel, investigate } = await failingService.declare({
+      title: 'Checkout 502s',
+      severity: 'sev2',
+      actor: ACTOR,
+    });
+
+    const report = await investigate();
+
+    // The channel must not be left on "pulling recent changes" forever.
+    expect(report.degraded).toBe('credit balance is too low');
+    expect(report.findings).toEqual([]);
+    const posts = chat.postsFor(channel!.id);
+    expect(posts).toHaveLength(2);
+    expect(JSON.stringify(posts[1]!.blocks)).toContain('credit balance is too low');
+    expect((await store.getCorrelation(incident.id))?.degraded).toBe('credit balance is too low');
+  });
+
   it('gives the correlator a way to fetch diffs on demand', async () => {
     const { service, llm, github } = setup();
     const { investigate } = await service.declare({ title: 'Checkout 502s', severity: 'sev2', actor: ACTOR });
