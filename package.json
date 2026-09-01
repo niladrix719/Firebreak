@@ -16,9 +16,7 @@
     "test:watch": "vitest",
     "lint": "eslint src test",
     "mcp": "tsx src/mcp/server.ts",
-    "mcp:start": "node dist/mcp/server.js",
-    "demo": "tsx src/cli/demo.ts",
-    "seed": "tsx src/cli/seed.ts"
+    "mcp:start": "node dist/mcp/server.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",

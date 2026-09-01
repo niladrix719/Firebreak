@@ -28,10 +28,9 @@ const RECENCY_TAU_HOURS = 4;
 /**
  * A deterministic stand-in for the LLM.
  *
- * It exists for two reasons. First, `npm run demo` has to work for someone who
- * cloned the repo thirty seconds ago and has no Anthropic key. Second, if the
- * Anthropic API is down during a real incident, responders still get a ranked
- * change list and a postmortem skeleton instead of an error.
+ * It exists so that if the Anthropic API is down or unconfigured during a
+ * real incident, responders still get a ranked change list and a postmortem
+ * skeleton instead of a command that just fails.
  *
  * It scores on term overlap, recency, and revert markers. It is not smart, and
  * it says so in its own output.

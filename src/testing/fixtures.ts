@@ -161,16 +161,3 @@ export function storefrontChanges(declaredAt: Date = new Date()): FixtureChange[
   ];
 }
 
-export const DEMO_INCIDENT_TITLE = 'Checkout API returning 502s for roughly 15% of requests';
-
-/** What responders actually type, in the order they type it. */
-export const DEMO_NOTES: string[] = [
-  'Confirmed from the edge dashboard — 502s started at 14:02, currently ~15% of /api/checkout/session.',
-  'Not a full outage: reads are fine, it is only session creation that fails.',
-  'checkout pods are healthy, no restarts, CPU and memory flat.',
-  'Redis cluster is showing ERR max number of clients reached in the checkout logs.',
-  'Connection count on the cluster is pinned at 512. We size the pool at 32 per task and run 12 tasks.',
-  'Scaling the Redis cluster maxclients to 2048 as an immediate mitigation.',
-  '502 rate is falling — down to 2% and dropping.',
-  'Clean for 10 minutes. Following up with a pool-size cap so this cannot recur on the next scale-out.',
-];

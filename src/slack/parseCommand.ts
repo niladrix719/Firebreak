@@ -17,9 +17,8 @@ const DEFAULT_SEVERITY: Severity = 'sev2';
 /**
  * Parses the raw text of `/incident …`.
  *
- * Kept pure and separate from Bolt: the whole surface area of the command
- * grammar is testable without a Slack client, and the same parser backs the
- * offline demo CLI.
+ * Kept pure and separate from Bolt, so the whole surface area of the command
+ * grammar is testable without a Slack client.
  */
 export function parseCommand(raw: string): ParsedCommand {
   const text = raw.trim().replace(/\s+/g, ' ');

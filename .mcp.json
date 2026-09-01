@@ -4,7 +4,7 @@
       "command": "npx",
       "args": ["tsx", "src/mcp/server.ts"],
       "env": {
-        "DATABASE_PATH": "./data/demo.db",
+        "DATABASE_PATH": "./data/firebreak.db",
         "LOG_LEVEL": "silent"
       }
     }

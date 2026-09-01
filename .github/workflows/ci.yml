@@ -40,11 +40,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: End-to-end demo (no credentials)
-        run: npm run demo -- --db ./data/ci.db
-        env:
-          NO_COLOR: '1'
-
   docker:
     runs-on: ubuntu-latest
     steps:

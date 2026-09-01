@@ -20,8 +20,8 @@ export interface Wiring {
 
 /**
  * The composition root. Every `new` for a production adapter happens here and
- * nowhere else, which is what lets `test/` and `src/cli/demo.ts` swap in fakes
- * without touching a line of the core.
+ * nowhere else, which is what lets `test/` swap in fakes without touching a
+ * line of the core.
  */
 export function buildWiring(config: AppConfig): Wiring {
   const store = new SqliteIncidentStore(config.databasePath);

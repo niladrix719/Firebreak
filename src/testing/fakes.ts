@@ -11,8 +11,8 @@ export interface PostedMessage {
 
 /**
  * Ids must be unique across instances: the store has a unique index on
- * channel_id, and a demo that seeds several incidents builds a fresh fake for
- * each one.
+ * channel_id, and a test that declares several incidents builds a fresh fake
+ * for each one.
  */
 let channelCounter = 0;
 let issueCounter = 900;

@@ -119,8 +119,8 @@ describe('loadMcpConfig', () => {
   });
 
   it('picks up GitHub when it is configured, for live change queries', () => {
-    const config = loadMcpConfig({ ...GITHUB, DATABASE_PATH: './data/demo.db' } as NodeJS.ProcessEnv);
-    expect(config.databasePath).toBe('./data/demo.db');
+    const config = loadMcpConfig({ ...GITHUB, DATABASE_PATH: './data/staging.db' } as NodeJS.ProcessEnv);
+    expect(config.databasePath).toBe('./data/staging.db');
     expect(config.github).toMatchObject({ owner: 'acme', repo: 'storefront' });
   });
 });
